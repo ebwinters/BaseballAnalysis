@@ -1,0 +1,6 @@
+Some questions I want to answer involving the baseball data:
+
+1. Are height and weight correlated with homeruns over their career (in the regular season)?
+  a. Make a scatter plot with height and weight as the axis the points being sized appropriately for homeruns
+  b. Use ML to make predictions on how many homeruns player will hit later on
+2. 
