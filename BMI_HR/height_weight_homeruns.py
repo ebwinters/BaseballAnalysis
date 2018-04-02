@@ -35,5 +35,3 @@ plt.scatter(data_by_height_weight['height'], data_by_height_weight['weight'], s=
 plt.ylabel('Weight (lb)')
 plt.xlabel('Height (in)')
 plt.show()
-
-
