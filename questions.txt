@@ -6,3 +6,6 @@ Some questions I want to answer using the baseball data:
 
 2. If you are on X team, how likely are you to be hit by a pitch?
   a. Graph bar chart with teams as x axis and likelyhood to be hit on y axis
+
+3. Correlation between salary and strikeouts to see if pitchers with higher strikeouts get paid more grouping by league
+  a. Violin plot x_axis:strikeouts rounded to nearest 10, y_axis:salaries, hue:league_ids
