@@ -42,10 +42,10 @@ merged_df['SO'] = merged_df['SO'].apply(myround)
 #step 3: plot it using scatter plot
 #find in both leagues, as strikeouts go up, so does salary 
 #grain of salt, strikeout bins sep by a lot, so dist looks funny for x axis.
-# plt.show(sns.lmplot(x="SO", y="avg_sal", data=merged_df, col="lgID"))
+plt.show(sns.lmplot(x="SO", y="avg_sal", data=merged_df, col="lgID"))
 
-# plt.show(sns.jointplot(x="SO", y="avg_sal", data=merged_df, kind="reg"))
+plt.show(sns.jointplot(x="SO", y="avg_sal", data=merged_df, kind="reg"))
 
-# plt.show(sns.kdeplot(merged_df['avg_sal'], shade=True))
+plt.show(sns.kdeplot(merged_df['avg_sal'], shade=True))
 
 plt.show(sns.violinplot(x="SO", y="avg_sal", hue="lgID", data=merged_df, palette="muted", split=True))
