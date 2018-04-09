@@ -9,7 +9,9 @@ from sklearn.metrics import accuracy_score
 #import data and clean all rows that have NA values
 batting_post = "~/Desktop/DataAnalysis_Udemy/BaseballAnalysis/baseballdatabank-master/core/BattingPost.csv"
 batting_post_df = pd.read_csv(batting_post)[['playerID', 'yearID', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB',  'CS',  'BB', 'SO']].dropna()
-
+batting_post_df['twoB'] = batting_post_df['2B']
+batting_post_df['threeB'] = batting_post_df['3B']
+batting_post_df = batting_post_df.drop(['2B', '3B'], axis=1)
 hof = "~/Desktop/DataAnalysis_Udemy/BaseballAnalysis/baseballdatabank-master/core/HallOfFame.csv"
 hof_df = pd.read_csv(hof)[['playerID','inducted']].dropna()
 
@@ -34,6 +36,64 @@ merged_df = hof_df.merge(batting_post_df, on=['playerID'], how='inner').drop(lab
 #need to average out all columns of statistics, since there are multiple years and this will get a better overall picture of the 
 #player's career
 merged_df = merged_df.groupby(['playerID'], as_index=False).mean()
+merged_df = merged_df.drop(labels=['playerID'], axis=1)
 
-print (merged_df.loc[merged_df['playerID'] == 'rootch01'])
-# print (merged_df.head())
+#need to put all columns into binary format for NaiveBayes to work
+merged_df_copy = merged_df
+le = preprocessing.LabelEncoder()
+inducted_cat = le.fit_transform(merged_df_copy.inducted)
+G_cat = le.fit_transform(merged_df_copy.G)
+AB_cat = le.fit_transform(merged_df_copy.AB)
+R_cat = le.fit_transform(merged_df_copy.R)
+H_cat = le.fit_transform(merged_df_copy.H)
+twoB_cat = le.fit_transform(merged_df_copy.twoB)
+threeB_cat = le.fit_transform(merged_df_copy.threeB)
+HR_cat = le.fit_transform(merged_df_copy.HR)
+RBI_cat = le.fit_transform(merged_df_copy.RBI)
+SB_cat = le.fit_transform(merged_df_copy.SB)
+CS_cat = le.fit_transform(merged_df_copy.CS)
+BB_cat = le.fit_transform(merged_df_copy.BB)
+SO_cat = le.fit_transform(merged_df_copy.SO)
+#initialize the encoded categorical columns
+merged_df_copy['inducted_cat'] = inducted_cat
+merged_df_copy['G_cat'] = G_cat
+merged_df_copy['AB_cat'] = AB_cat
+merged_df_copy['R_cat'] = R_cat
+merged_df_copy['H_cat'] = H_cat
+merged_df_copy['twoB_cat'] = twoB_cat
+merged_df_copy['threeB_cat'] = threeB_cat
+merged_df_copy['HR_cat'] = HR_cat
+merged_df_copy['RBI_cat'] = RBI_cat
+merged_df_copy['SB_cat'] = SB_cat
+merged_df_copy['CS_cat'] = CS_cat
+merged_df_copy['BB_cat'] = BB_cat
+merged_df_copy['SO_cat'] = SO_cat
+merged_df_copy = merged_df_copy.drop(['inducted', 'G','AB', 'R', 'H', 'twoB', 'threeB', 'HR', 'RBI', 'SB',  'CS',  'BB', 'SO'], axis=1)
+
+#now need to standardize data
+features = ['G_cat','AB_cat', 'R_cat', 'H_cat', 'twoB_cat', 'threeB_cat', 'HR_cat', 'RBI_cat', 'SB_cat',  'CS_cat',  'BB_cat', 'SO_cat']
+scaled_features = {}
+for feature in features:
+  mean, std = merged_df_copy[feature].mean(), merged_df_copy[feature].std()
+  scaled_features[feature] = [mean, std]
+  merged_df_copy.loc[:, feature] = (merged_df_copy[feature]-mean)/std
+
+#split data into training and testing sets
+features = merged_df_copy.values[...,1:]
+target = merged_df_copy.values[:,:1]
+features_train, features_test, target_train, target_test = train_test_split(features, target, test_size = 0.33, random_state = 10)
+
+#train model
+clf = GaussianNB()
+clf.fit(features_train, target_train.ravel())
+prediction = clf.predict(features_test)
+
+#get accuracy
+accuracy = accuracy_score(target_test, prediction, normalize=True)
+#0.664536741214 - not very good but it's my first try 
+
+#simple test to see whether it picks up an obvious example of an all star, which it does,
+# ethan_test = [[7,28,3,6,0,0,0,2,2,0,2,3]]
+# prediction1 = clf.predict(ethan_test)
+# print (prediction1)
+
