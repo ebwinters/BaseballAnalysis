@@ -7,7 +7,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 
 #import data and clean all rows that have NA values
-batting_post = "~/Desktop/DataAnalysis_Udemy/BaseballAnalysis/baseballdatabank-master/core/BattingPost.csv"
+batting_post = "~/Desktop/DataAnalysis_Udemy/BaseballAnalysis/baseballdatabank-master/core/Batting.csv"
 batting_post_df = pd.read_csv(batting_post)[['playerID', 'yearID', 'G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB',  'CS',  'BB', 'SO']].dropna()
 batting_post_df['twoB'] = batting_post_df['2B']
 batting_post_df['threeB'] = batting_post_df['3B']
@@ -90,10 +90,38 @@ prediction = clf.predict(features_test)
 
 #get accuracy
 accuracy = accuracy_score(target_test, prediction, normalize=True)
-#0.664536741214 - not very good but it's my first try 
+#0.6890756302521008 - not very good but it's my first try 
 
-#simple test to see whether it picks up an obvious example of an all star, which it does,
+#simple test to see whether it picks up an obvious example of an all star, which it does.
+#ISSUE WITH THIS TEST: DATA ISN'T NORMALIZED, NEED TO TAKE THAT INTO ACCOUNT WHEN WRITING INTERACTIVE PART
 # ethan_test = [[7,28,3,6,0,0,0,2,2,0,2,3]]
 # prediction1 = clf.predict(ethan_test)
 # print (prediction1)
 
+
+#function for interactive.py
+def make_prediction(test_data_dict):
+  adj_feats = {
+  'G':'G_cat',
+  'AB':'AB_cat',
+  'R':'R_cat',
+  'H':'H_cat',
+  'twoB':'twoB_cat',
+  'threeB':'threeB_cat',
+  'HR':'HR_cat',
+  'RBI':'RBI_cat',
+  'SB':'SB_cat',
+  'CS':'CS_cat',
+  'BB':'BB_cat',
+  'SO':'SO_cat'
+  }
+  test_data_df = pd.DataFrame(test_data_dict, index=[0])
+  #standardize input data
+  for feature in adj_feats.keys():
+    test_data_df[feature] = (test_data_df[feature]-scaled_features[adj_feats[feature]][0])/scaled_features[adj_feats[feature]][1]
+
+  prediction = clf.predict(test_data_df.values)
+  print (prediction)
+
+  # prediction = clf.predict(test_data_df.values)
+  # print (prediction)

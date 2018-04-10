@@ -10,5 +10,6 @@ Some questions I want to answer using the baseball data:
 3. Correlation between salary and strikeouts to see if pitchers with higher strikeouts get paid more grouping by league
   a. Violin plot x_axis:strikeouts rounded to nearest 10, y_axis:salaries, hue:league_ids
 
-4. Use a Naive Bayes classifier to look at postseason batting data and hall of fame induction data to predict given a player's statistics
+4. Use a Naive Bayes classifier to look at regular season batting data and hall of fame induction data to predict given a player's statistics
     whether or not they will be inducted into the hall of fame
+  a. Make small interface for cmd to analyze stats and make predictions
